@@ -51,6 +51,11 @@ public class SudokuPanel extends JPanel {
 	public void newSudokuPuzzle(SudokuPuzzle puzzle) {
 		this.puzzle = puzzle;
 	}
+
+	public SudokuPuzzle getSudokuPuzzle() {
+		return this.puzzle;
+	}
+
 	
 	public void setFontSize(int fontSize) {
 		this.fontSize = fontSize;

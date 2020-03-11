@@ -134,7 +134,13 @@ public class SudokuPuzzle {
 		}
 		return "";
 	}
-	
+
+	public void setValue(int row,int col,String s) {
+		if(this.inRange(row,col)) {
+			this.board[row][col]=s;
+		}
+	}
+
 	public String [][] getBoard() {
 		return this.board;
 	}

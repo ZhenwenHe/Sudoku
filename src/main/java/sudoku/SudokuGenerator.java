@@ -37,7 +37,14 @@ public class SudokuGenerator {
 		
 		return puzzle;
 	}
-	
+
+	public SudokuPuzzle generateEmptySudoku(SudokuPuzzleType puzzleType) {
+		return new SudokuPuzzle(puzzleType.getRows(),
+				puzzleType.getColumns(),
+				puzzleType.getBoxWidth(),
+				puzzleType.getBoxHeight(),
+				puzzleType.getValidValues());
+	}
 	/**
 	 * Solves the sudoku puzzle
 	 * Pre-cond: r = 0,c = 0

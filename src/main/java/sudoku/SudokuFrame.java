@@ -18,7 +18,7 @@ public class SudokuFrame extends JFrame {
 
 	private JPanel buttonSelectionPanel;
 	private SudokuPanel sPanel;
-	
+
 	public SudokuFrame() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Sudoku");
@@ -27,13 +27,24 @@ public class SudokuFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu file = new JMenu("Game");
 		JMenu newGame = new JMenu("New Game");
+
 		JMenuItem sixBySixGame = new JMenuItem("6 By 6 Game");
 		sixBySixGame.addActionListener(new NewGameListener(SudokuPuzzleType.SIXBYSIX,30));
+
 		JMenuItem nineByNineGame = new JMenuItem("9 By 9 Game");
 		nineByNineGame.addActionListener(new NewGameListener(SudokuPuzzleType.NINEBYNINE,26));
+
 		JMenuItem twelveByTwelveGame = new JMenuItem("12 By 12 Game");
 		twelveByTwelveGame.addActionListener(new NewGameListener(SudokuPuzzleType.TWELVEBYTWELVE,20));
-		
+
+
+		JMenuItem  gameSolver= new JMenuItem("Game Solver");
+		gameSolver.addActionListener(new GameSolverListener(SudokuPuzzleType.NINEBYNINE,26));
+
+
+		JMenuItem  gameClear= new JMenuItem("Game Clear");
+		gameClear.addActionListener(new GameClearListener(SudokuPuzzleType.NINEBYNINE,26));
+
 		/*
 		 * need to include this when solving algorithm is improved
 		 JMenuItem sixteenBySizteenGame = new JMenuItem("16 By 16 Game");
@@ -44,6 +55,8 @@ public class SudokuFrame extends JFrame {
 		newGame.add(twelveByTwelveGame);
 		//newGame.add(sixteenBySizteenGame);
 		file.add(newGame);
+		file.add(gameSolver);
+		file.add(gameClear);
 		menuBar.add(file);
 		this.setJMenuBar(menuBar);
 		
@@ -78,7 +91,8 @@ public class SudokuFrame extends JFrame {
 		buttonSelectionPanel.revalidate();
 		buttonSelectionPanel.repaint();
 	}
-	
+
+
 	private class NewGameListener implements ActionListener {
 
 		private SudokuPuzzleType puzzleType;
@@ -94,7 +108,76 @@ public class SudokuFrame extends JFrame {
 			rebuildInterface(puzzleType,fontSize);
 		}
 	}
-	
+
+	private class GameSolverListener implements ActionListener{
+
+		private SudokuPuzzleType puzzleType;
+		private int fontSize;
+
+		public GameSolverListener(SudokuPuzzleType puzzleType,int fontSize) {
+			this.puzzleType = puzzleType;
+			this.fontSize = fontSize;
+		}
+
+		/**
+		 * Invoked when an action occurs.
+		 *
+		 * @param e
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SudokuPuzzle sp = sPanel.getSudokuPuzzle();
+			System.out.print(sp.toString());
+			SudokuPuzzle generatedPuzzle =  SudokuSolver.solve(sp);
+
+			sPanel.newSudokuPuzzle(generatedPuzzle);
+			sPanel.setFontSize(fontSize);
+			buttonSelectionPanel.removeAll();
+			for(String value : generatedPuzzle.getValidValues()) {
+				JButton b = new JButton(value);
+				b.setPreferredSize(new Dimension(40,40));
+				b.addActionListener(sPanel.new NumActionListener());
+				buttonSelectionPanel.add(b);
+			}
+			sPanel.repaint();
+			buttonSelectionPanel.revalidate();
+			buttonSelectionPanel.repaint();
+
+		}
+	}
+
+	private class GameClearListener implements ActionListener{
+		private SudokuPuzzleType puzzleType;
+		private int fontSize;
+
+		public GameClearListener(SudokuPuzzleType puzzleType,int fontSize) {
+			this.puzzleType = puzzleType;
+			this.fontSize = fontSize;
+		}
+
+		/**
+		 * Invoked when an action occurs.
+		 *
+		 * @param e
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SudokuPuzzle generatedPuzzle =  new SudokuGenerator().generateEmptySudoku(this.puzzleType);
+			sPanel.newSudokuPuzzle(generatedPuzzle);
+			sPanel.setFontSize(fontSize);
+			buttonSelectionPanel.removeAll();
+			for(String value : generatedPuzzle.getValidValues()) {
+				JButton b = new JButton(value);
+				b.setPreferredSize(new Dimension(40,40));
+				b.addActionListener(sPanel.new NumActionListener());
+				buttonSelectionPanel.add(b);
+			}
+			sPanel.repaint();
+			buttonSelectionPanel.revalidate();
+			buttonSelectionPanel.repaint();
+		}
+	}
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
